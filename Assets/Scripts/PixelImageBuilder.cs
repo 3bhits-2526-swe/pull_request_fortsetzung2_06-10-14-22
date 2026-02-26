@@ -14,6 +14,10 @@ public class PixelImageBuilder : MonoBehaviour
     public int rows = 10;
     public int columns = 7;
 
+    [Header("Optional Features")]
+    [Tooltip("If enabled, grid pixels will get random colors on start.")]
+    public bool randomizeOnStart = false;
+
     [HideInInspector] public Image[] gridPixels;
     [HideInInspector] public Image[] inputPixels;
 
@@ -21,6 +25,11 @@ public class PixelImageBuilder : MonoBehaviour
     {
         BuildGrid();
         BuildInputLine();
+
+        if (randomizeOnStart)
+        {
+            RandomizeGridColors();
+        }
     }
 
     void BuildGrid()
@@ -34,7 +43,9 @@ public class PixelImageBuilder : MonoBehaviour
             {
                 GameObject go = Instantiate(pixelPrefab, gridParent);
                 go.name = $"Grid_{y}_{x}";
-                gridPixels[index++] = go.GetComponent<Image>();
+
+                Image img = go.GetComponent<Image>();
+                gridPixels[index++] = img;
             }
         }
     }
@@ -47,7 +58,20 @@ public class PixelImageBuilder : MonoBehaviour
         {
             GameObject go = Instantiate(pixelPrefab, inputLineParent);
             go.name = $"Input_Q{i}";
+
             inputPixels[i] = go.GetComponent<Image>();
+        }
+    }
+
+    void RandomizeGridColors()
+    {
+        foreach (var pixel in gridPixels)
+        {
+            pixel.color = new Color(
+                Random.value,
+                Random.value,
+                Random.value
+            );
         }
     }
 }
